@@ -61,10 +61,10 @@ def install_openresty( ):
     exec_sys_cmd('git clone https://github.com/eustas/ngx_brotli.git')
     os.chdir('ngx_brotli')
     exec_sys_cmd('git submodule update --init')
-
     os.chdir('../')
+    exec_sys_cmd('git clone https://github.com/FRiCKLE/ngx_cache_purge.git')
     exec_sys_cmd('pwd')
-    exec_sys_cmd( './configure --add-module=\'ngx_brotli\' --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit ' +
+    exec_sys_cmd( './configure --add-module=\'ngx_brotli\' --add-module=\'ngx_cache_purge\' --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit ' +
                   '--with-fastcgi_cache_purge  --with-openssl=openssl-1.1.1a --with-openssl-opt=\'enable-tls1_3\'' )
     print('### compile openresty ...')
     exec_sys_cmd( 'make' )
