@@ -1,43 +1,40 @@
 # VeryNginx
-VeryNginx is a very powerful and friendly nginx .
+VeryNginx 是一个功能强大而对人类友好的 Nginx 扩展程序.
 
-[中文文档](https://github.com/alexazhou/VeryNginx/blob/master/readme_zh.md)
+### 提示
+ `v0.2` 版本之后，控制台入口被移动到了 `/verynginx/index.html`
 
-### Notice
-After v0.2 , The entry uri of control panel was moved to `/verynginx/index.html`
+## 介绍
 
+VeryNginx 基于 `lua_nginx_module(openrestry)` 开发，实现了高级的防火墙、访问统计和其他的一些功能。 集成在 Nginx 中运行，扩展了 Nginx 本身的功能，并提供了友好的 Web 交互界面。
 
-## Description
+[VeryNginx在线实例](http://alexazhou.xyz/vn/index.html) 
 
-VeryNginx is based on `lua_nginx_module(openrestry)`. It implements advanced firewall(waf), access statistics and some other features. It strengthens the Nginx's functions, and provides a friendly Web interface.
+用户名 / 密码: **verynginx / verynginx**
 
-[VeryNginx online demo](http://alexazhou.xyz/vn/index.html) 
+详细配置说明见：[VeryNginx Github WiKi](https://github.com/alexazhou/VeryNginx/wiki/目录)
 
-User / Password: **verynginx / verynginx**
+### Nginx 运行状态分析
 
-The full version of config guide can be found on: [VeryNginx Wiki](https://github.com/alexazhou/VeryNginx/wiki) .
+* 每秒请求数
+* 响应时间
+* 网络流量
+* 网络连接数
 
-### Nginx run status analyzing
-
-* Request per second
-* Response time
-* Net Traffic
-* Tcp connectinn num
-
-![Nginx status](http://ww2.sinaimg.cn/mw690/3fcd0ed3jw1f17en7oc1yj20z00ol0wl.jpg)
+![Nginx 运行状态](http://ww2.sinaimg.cn/mw690/3fcd0ed3jw1f17en7oc1yj20z00ol0wl.jpg)
 
 
-### Custom Action
+### 自定义行为
 
-VeryNginx supports custom actions, which can do a lot of things.
+VeryNginx 包含强大的自定义功能，可以做很多事情
 
-Custom action consists of two parts, `Matcher` and `Action` . `Matcher` is used to test whether a request meets the rule， `Action` is the logic you want to run.
+自定义行为包含两部分， Matcher 和 Action 。 Matcher 用来对请求进行匹配， Action 为要执行的动作
 
->The advantage of this design is that the `Matcher` includes all select rule, and can be reused, making use of rules to describe a very complex logic possible.
+这样的优势在于把所有的前置判断整合在Matcher里一起来实现了，使复杂(组合)规则的实现变成了可能
 
 #### Matcher
 
-A `Matcher` is used to select a part of all requests, a `Matcher` may contain one or more condition. The following conditions are currently supported:
+一个 Matcher 用来判断一个 Http 请求是否符合指定的条件， 一个 Matcher 可以包含一个或者多个约束条件，目前支持以下几种约束：
 
 * Client IP
 * Host
@@ -46,24 +43,24 @@ A `Matcher` is used to select a part of all requests, a `Matcher` may contain on
 * Referer
 * Request Args
 
-When a request does not conflict with any of the conditions of the Matcher, the request will be selected by the `Matcher`
+当一个请求没有违反 Matcher 中包含的全部条件时，即命中了这个 Matcher 
 
 #### Action
 
-Every `Action` refers to a `Matcher` , and will run on the requests selected by the `Matcher` 
+每个 Action 会引用一个 Matcher ，当 Matcher 命中时， Action 会被执行
 
-Now we have these `Action`s
+目前已经实现了以下 Action
 
-* **Scheme** Lock lock the scheme to http/https
-* **Redirect** Redirect request
-* **URI Rewrite** Do internal rewrite on the request
-* **Browser Verify** Use set-cookies and javascript to verify the client is a browser，and block traffic of the robot. This action may block the spider of search engine, so please enable it when under attack only.
-* **Frequency Limit** Limit max request time in a specified time period
-* **Filter** Block some request, can do the WAF
+* **Scheme Lock** 将访问协议锁定为 Https 或者 Http
+* **Redirect** 对请求进行重定向
+* **URI Rewrite** 对请求的 URI 进行内部重写
+* **Browser Verify** 通过set-cookies 和 js 验证客户端是否为浏览器，并拦截非浏览器流量。本功能可能会阻拦搜索引擎爬虫，建议仅在被攻击时开启，或者针对搜索引擎编写特别的规则。
+* **Frequency Limit** 访问频率限制
+* **Filter(waf)** 过滤器
 
-Matcher can select requests by multiple conditions, so with Filter Action, we got a powerful waf. The waf can filter requests with complex rules and return special status code when it block a request.
+因为 Matcher 可以对请求进行细致的匹配，所以结合 Filter Action，就可以实现一个高级的WAF，可以利用Matcher中所有的条件来对请求进行过滤，并返回指定状态码
 
-VeryNginx presets some simple filter rules, which can prevent simple SQL injection, Git and SVN file disclosure, directory traversal attacks and common scanning tool.
+VeryNginx 预置了常用的过滤规则，可以在一定程度上阻止常见的 SQL 注入、Git 及 SVN 文件泄露、目录遍历攻击，并拦截常见的扫描工具。
 
 ![VeryNginx Matcher](http://ww2.sinaimg.cn/mw690/3fcd0ed3jw1f17en8ovthj20zs0pdn1x.jpg)
 
@@ -71,155 +68,159 @@ VeryNginx presets some simple filter rules, which can prevent simple SQL injecti
 
 #### Backend
 
-Every `Backend` refers to a `Matcher`，and will handle the requests selected by the `Matcher`
+每个 Backend 会引用一个 Matcher ，当 Matcher 命中时， 请求会通过 Backend 进行处理
 
-Now we have these `Backend`
+目前已经实现了以下 Backend
 
-* **Proxy Pass** Proxy the request to other server
-* **Static File** Use local file to handle the request file 
+* **Proxy Pass** 将请求反向代理到其它服务器
+* **Static File** 使用本地文件处理请求
 
-### Request statistics
+### 访问统计
 
-VeryNginx can record the request of URI, include these data of every URI:
+VeryNginx 可以统计网站每个URI的访问情况，包括每个URI的:
 
-* All Request Count
-* Request count of every status code
-* Total Bytes 
-* Avg Bytes
-* Total response time
-* Avg reqponse time
+* 总请求次数
+* 各状态码次数
+* 返回总字节数
+* 每请求平均字节数
+* 总响应时间
+* 平均响应时间
 
+并且可以按各种规则排序进行分析。
 
-![request statistics](http://ww1.sinaimg.cn/mw690/3fcd0ed3jw1f17ena2ipyj20zw0piqag.jpg)
+![Nginx 运行状态](http://ww1.sinaimg.cn/mw690/3fcd0ed3jw1f17ena2ipyj20zw0piqag.jpg)
 
+## 安装和使用说明
 
-## Installation
+VeryNginx 基于 OpenResty[^openresty]，所以安装 VeryNginx 需要先安装好 OpenResty。不过并不用担心安装过程中可能的麻烦，VeryNginx 自身提供了脚本来进行安装工作。
 
-### Install Nginx / OpenResty
+### 安装 VeryNginx
 
-VeryNginx is based on OpenResty, so you need to install it first. But don't warry, VeryNginx gives a script to do it automatically.
-
+克隆 VeryNginx 仓库到本地, 然后进入仓库目录，执行以下命令 
 
 ```
 python install.py install
 ```
 
-Just run this command, openresty and verynginx will be installed automatically.
- 
-#### Want using custom nginx?
+即可一键安装 VeryNginx 和 以及依赖的 OpenResty
 
-VeryNginx can install openresty automatically so that you **needn't install nginx(openresty) manually**.
+#### 想使用自己的 Nginx?
 
-But if you want use a nginx compiled by you self, that also ok. You can see that for some help 
+VeryNginx 可以自动为你安装依赖的 OpenResty，通常情况下你**没有必要**再自己安装 OpenResty。
 
-[Use-own-nginx](https://github.com/alexazhou/VeryNginx/wiki/Use-own-nginx)
+但如果你想要**使用自己编译的 Nginx( OpenResty )**，也是可以的。具体方法请阅读Wiki中的这篇说明:[Use own nginx](https://github.com/alexazhou/VeryNginx/wiki/Use-own-nginx)
+### 使用
 
-### Usage
+#### 编辑 Nginx 配置文件
 
-#### Edit nginx configuration file
+VeryNginx 的配置文件位置为 **/opt/verynginx/openresty/nginx/conf/nginx.conf**，这是一个简单的示例文件，可以让你访问到 VeryNginx的控制面板。如果你想真正的用 VeryNginx 来做点什么，那你需要编辑这个文件，并将自己的 Nginx 配置加入到其中。
 
-The configuration file of VeryNginx is `/opt/verynginx/openresty/nginx/conf/nginx.conf`, that's a demo. It just can let verynginx run so that you can see the dashboard of verynginx. If you want do something really useful, you need edit that file and add your own nginx configuration into it.
-
->
-This configuration file add three `include` command to embeded verynginx into original nginx( openresty ) 
-
+>这个配置文件在普通的 Nginx 配置文件基础上添加了三条 Include 指令来实现功能，分别为 
 >
 * include /opt/verynginx/verynginx/nginx_conf/in_external.conf;
 * include /opt/verynginx/verynginx/nginx_conf/in_http_block.conf;
 * include /opt/verynginx/verynginx/nginx_conf/in_server_block.conf;
+>
+以上三条指令分别放在 http 配置块外部，http 配置块内部，server 配置块内部，在修改时请保留这三条。如果添加了新的 Server 配置块或 http 配置块，也需要在新的块内部加入对应的 include 行。
 
->These `include` command were placed outside a block, block http internal configuration, server configuration block inside, Remenber keep these three line when modifying. If you add a new Server configuration block or http configuration block, also need add suitable `include` line into it.
+### 启动／停止／重启 服务
 
-### Start / Stop / Restart Service
+完成安装工作以后，可以通过以下命令来运行 VeryNginx
 
 ```
-#Start Service
+#启动服务
 /opt/verynginx/openresty/nginx/sbin/nginx
 
-#Stop Service
+#停止服务
 /opt/verynginx/openresty/nginx/sbin/nginx -s stop
 
-#Restart Service
+#重启服务
 /opt/verynginx/openresty/nginx/sbin/nginx -s reload
-
 ```
 
-### Configure VeryNginx on dashboard
 
-After the service begin running, you can see server status and do config on dashboard.
+### 通过web面板对 VeryNginx 进行配置
 
-The address  of dashboard is `http://{{your_machine_address}}/verynginx/index.html`.
+VeryNginx 启动后，可以通过浏览器访问管理面板来查看状态以及进行配置。
 
-Default user and password is `verynginx` / `verynginx`. You should be able to work through all the options now.
+管理面板地址为 `http://{{your_machine_address}}/verynginx/index.html`。
 
-The full version of config guide can be found in [VeryNginx Wiki](https://github.com/alexazhou/VeryNginx/) .
+默认用户名和密码是 `verynginx` / `verynginx`。
 
-### Trouble Shooting
+登录之后就可以查看状态，并对配置进行修改了。修改配置后，点击保存才会生效.
 
-If you have any problems during **installation** / **configuration** / **use** , you can refer the Trouble Shooting document.
+### 故障排除
 
-[Trouble Shooting](https://github.com/alexazhou/VeryNginx/wiki/Trouble-Shooting) 
+如果你在 **安装** / **配置** / **使用** 的过程中遇到任何问题, 你可以参考故障排除文档来解决.
 
-#### Tips
+[故障排除](https://github.com/alexazhou/VeryNginx/wiki/Trouble-Shooting) 
 
-* New configs will be effective immediately upon saving. It's not necessary to restart or reload nginx.
 
-* When you save config, VeryNginx will write all configs to `/opt/verynginx/verynginx/configs/config.json`.
+#### 详细的配置说明
 
-* If the chat in status page is stuck, you can click the gear icon in the upper right corner to turn off animation
+VeryNginx 按照易于使用的思想进行设计，如果你有一定的基础，或是对 Nginx 较了解，那么你应该可以直接在界面上使用。
 
-* If you lock yourself out of VeryNginx by doing something stupid, you can always delete `config.json` to revert VeryNginx to its default.
+当然 VeryNginx 也提供了详细的文档供你查阅。
+[VeryNginx Wiki](https://github.com/alexazhou/VeryNginx/wiki/目录)
 
-### Update VeryNginx / OpenResty
+#### 提示
 
-Over time, VeryNginx own will evolve, and can also support newer version of OpenResty. New version of VeryNginx might support some new features or fix some old bugs. If you want to update locally installed VeryNginx, you just need pull the latest code from github to local, and run the following commands:
+* 通过 VeryNginx 控制面板保存新配置之后，会立刻生效，并不需要 restart/reload Nginx。
+
+* VeryNginx 把配置保存在 `/opt/verynginx/verynginx/configs/config.json` 里面。
+
+* 状态页面图表默认带有动画效果，如果有卡顿，可以点右上角齿轮图标关掉动画效果
+
+* 如果因为配错了什么选项，导致无法登录，可以手动删除 `config.json` 来清空配置，或者手动编辑这个文件来修复。
+
+### 更新 VeryNginx ／ OpenResty
+
+随着时间的发展，VeryNginx 本身的代码会演进，也可以会支持更新版本的 OpenResty ，更新的代码可能会支持一些新的功能，或是修复了一些旧的bug。如果要更新本地已经安装的 VeryNginx ，你只需要先 pull github 上最新的代码到本地，然后通过以下命令来进行更新：
+
 
 ```
-#Update VeryNginx
+#更新 Verynginx
 python install.py update verynginx
 
-#Update OpenResty
+#更新 OpenResty
 python install.py update openresty
 
 ```
 
-install.py will keep the old config.json and nginx.conf during update. So that you **will not lost configuration** after update.
+install.py脚本在升级过程中，将保留原有的 config.json 和 nginx.conf, 所以**更新的过程并不会丢失配置**
 
-### Build VeryNginx docker Image
+## 构建VeryNginx docker 镜像
 
-After cloning code to your local filesystem, you can run the following commands:
+在将代码clone到本地之后，你可以运行下面的命令：
 
 ```
-cd Docker  
+cd VeryNginx
+cp Docker/Dockerfile Dockerfile
 docker build -t verynginx .
-docker run verynginx
+docker run 8080:80 verynginx
 ```
+然后用浏览器打开 `http://{{your_docker_machine_address}}/verynginx/index.html`
 
-Then you can navigate to your browser `http://{{your_docker_machine_address}}/verynginx/index.html`
+当然你也可以运行 `docker run -p xxxx:80 verynginx` 来映射一下你的container的端口到你的宿主机，默认是80，你可以把xxxx改成你希望的在宿主机上的端口号
 
-Optionally you can run `docker run -p xxxx:80 verynginx` to map your container port 80 to your host's xxxx port
+## 捐赠
 
-
-## Donate
-
-If you like VeryNginx, you can donate to support my development VeryNginx. With your support, I will be able to make VeryNginx better 😎.
+如果你喜欢 VeryNginx，那么你可以通过捐赠来支持我开发 VeryNginx。有了你的支持，我将可以让 VeryNginx 变的更好😎
 
 ### PayPal 
 
-[Support VeryNginx via PayPal](https://www.paypal.me/alexazhou)
+[通过 PayPal 来支持 VeryNginx](https://www.paypal.me/alexazhou)
 
-### We Chat
+### 微信
 
-Scan the QRcode to support VeryNginx.
+扫描下方的二维码来支持 VeryNginx
 
 <img title="WeChat QRcode" src="http://ww4.sinaimg.cn/mw690/3fcd0ed3jw1f6kecm1e3nj20f00emq59.jpg" width="200">
 
-## Thanks
 
-[VeryNginx thanks for the help](https://github.com/alexazhou/VeryNginx/wiki/Thanks)
+## 致谢
+
+[感谢大家对VeryNginx的帮助](https://github.com/alexazhou/VeryNginx/wiki/Thanks)
 
 
-### Enjoy~
-
-[^openresty]: [OpenResty](https://github.com/openresty/openresty) Openresty is a enhanced nginx，bundle standard nginx core and lots of 3rd-party nginx module. 
 
