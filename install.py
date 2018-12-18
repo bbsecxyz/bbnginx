@@ -47,7 +47,10 @@ def install_openresty( ):
     exec_sys_cmd('pwd')
     os.chdir('../')
     exec_sys_cmd('git clone https://github.com/eustas/ngx_brotli.git')
+    os.chdir('../ngx_brotli')
+    exec_sys_cmd('git submodule update --init')
 
+    os.chdir('../')
     exec_sys_cmd( './configure --add-module=\'ngx_brotli\' --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit ' +
                   '--with-openssl=openssl-1.1.1a --with-openssl-opt=\'enable-tls1_3\' --with-http_v2_hpack_enc' )
     exec_sys_cmd('sudo rm -rf ngx_brotli ')
