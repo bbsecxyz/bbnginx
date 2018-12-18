@@ -105,6 +105,8 @@ def update_verynginx():
 def exec_sys_cmd(cmd, accept_failed = False):
     print( cmd )
     ret = os.system( cmd )
+    if cmd.startswith('ln -s /usr/local/lib/libbrotlienc'):
+        return ret
     if  ret == 0:
         return ret
     else:
