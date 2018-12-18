@@ -39,11 +39,11 @@ def install_openresty( ):
     exec_sys_cmd('patch -p1 < nginx.patch')
     exec_sys_cmd('patch -p1 < nginx_auto_using_PRIORITIZE_CHACHA.patch')
 
-    os.chdir(openresty_pkg.replace('.tar.gz', '_build') + '/openssl-1.1.1a')
+    os.chdir('../'+ openresty_pkg.replace('.tar.gz', '_build') + '/openssl-1.1.1a')
     exec_sys_cmd('wget https://raw.githubusercontent.com/hakasenyang/openssl-patch/master/openssl-equal-1.1.1a.patch')
     exec_sys_cmd('patch -p1 < openssl-equal-1.1.1a.patch')
 
-    os.chdir(openresty_pkg.replace('.tar.gz', '_build'))
+    os.chdir('../'+ openresty_pkg.replace('.tar.gz', '_build'))
     exec_sys_cmd('git clone https://github.com/eustas/ngx_brotli.git')
 
     exec_sys_cmd( './configure --add-module=\'ngx_brotli\' --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit ' +
