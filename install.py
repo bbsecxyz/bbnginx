@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Date    : 2016-04-04 23:48
-# @Author  : Alexa (AlexaZhou@163.com)
-# @Link    : https://github.com/alexazhou/VeryNginx
-# @Disc    : install VeryNginx
+# @Date    : 2018-12-18
+# @Author  : @bbsec3 (admin@bbsec.xyz)
+# @Link    : https://github.com/bbsecxyz/verynginx
+# @Disc    : install BBnginx
 # @Disc    : support python 2.x and 3.x
 
 import os
@@ -52,14 +52,10 @@ def install_openresty( ):
     os.chdir('libbrotli')
     exec_sys_cmd('./autogen.sh && ./configure')
     exec_sys_cmd('make && make install')
-    try:
-        exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib64 && ln -s /usr/local/lib/libbrotlienc.so.0 /lib64')
-    except:
-        pass
-    try:
-        exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib && ln -s /usr/local/lib/libbrotlienc.so.0 /lib')
-    except:
-        pass
+
+    exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib64 && ln -s /usr/local/lib/libbrotlienc.so.0 /lib64')
+    exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib && ln -s /usr/local/lib/libbrotlienc.so.0 /lib')
+
 
     os.chdir('../')
     exec_sys_cmd('git clone https://github.com/eustas/ngx_brotli.git')
@@ -70,12 +66,15 @@ def install_openresty( ):
     exec_sys_cmd('pwd')
     exec_sys_cmd( './configure --add-module=\'ngx_brotli\' --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit ' +
                   '--with-openssl=openssl-1.1.1a --with-openssl-opt=\'enable-tls1_3\'' )
-    exec_sys_cmd('sudo rm -rf ngx_brotli ')
     print('### compile openresty ...')
     exec_sys_cmd( 'make' )
     
     print('### install openresty ...')
     exec_sys_cmd( 'make install' )
+
+
+    exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib64 && ln -s /usr/local/lib/libbrotlienc.so.0 /lib64')
+    exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib && ln -s /usr/local/lib/libbrotlienc.so.0 /lib')
 
 def install_verynginx():
     
@@ -111,6 +110,7 @@ def exec_sys_cmd(cmd, accept_failed = False):
     else:
         if accept_failed == False:
             print('*** The installing stopped because something was wrong')
+            exec_sys_cmd('rm -rf ' + openresty_pkg.replace('.tar.gz', '_build'))
             exit(1)
         else:
             return False
