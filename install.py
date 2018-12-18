@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Date    : 2018-12-18
 # @Author  : @bbsec3 (admin@bbsec.xyz)
-# @Link    : https://github.com/bbsecxyz/verynginx
+# @Link    : https://github.com/bbsecxyz/bbnginx
 # @Disc    : install BBnginx
 # @Disc    : support python 2.x and 3.x
 
