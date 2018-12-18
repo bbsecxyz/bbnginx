@@ -11,8 +11,8 @@ import sys
 import getopt
 import filecmp
 
-openresty_pkg_url = 'https://openresty.org/download/openresty-1.9.15.1.tar.gz'
-openresty_pkg = 'openresty-1.9.15.1.tar.gz'
+
+openresty_pkg = 'openresty-1.13.6.2.tar.gz'
 
 work_path = os.getcwd()
 
@@ -24,30 +24,13 @@ def install_openresty( ):
     
     #makesure the dir is clean
     print('### makesure the work directory is clean')
-    exec_sys_cmd('rm -rf ' + openresty_pkg.replace('.tar.gz',''))
-    
-    #download openresty
-    down_flag = True
-    if os.path.exists( './' + openresty_pkg ):
-        ans = ''
-        while ans not in ['y','n']:
-            ans = common_input(' Found %s in current directory, use it?(y/n)'%openresty_pkg)
-        if ans == 'y':
-            down_flag = False
+    exec_sys_cmd('rm -rf ' + openresty_pkg.replace('.tar.gz','_build'))
 
-    if down_flag == True:
-        print('### start download openresty package...')
-        exec_sys_cmd('rm -rf ' + openresty_pkg)
-        exec_sys_cmd( 'wget ' + openresty_pkg_url )
-    else:
-        print('### use local openresty package...')
-    
-    print('### release the package ...')
-    exec_sys_cmd( 'tar -xzf ' + openresty_pkg )
 
     #configure && compile && install openresty
     print('### configure openresty ...')
-    os.chdir( openresty_pkg.replace('.tar.gz','') )
+    exec_sys_cmd('cp -r ' + openresty_pkg.replace('.tar.gz','') + '  ' + openresty_pkg.replace('.tar.gz','_build') )
+    os.chdir( openresty_pkg.replace('.tar.gz','_build') )
     exec_sys_cmd( './configure --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit' )
     
     print('### compile openresty ...')
