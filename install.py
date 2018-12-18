@@ -48,14 +48,28 @@ def install_openresty( ):
 
     os.chdir('../')
     exec_sys_cmd('pwd')
+    exec_sys_cmd('git clone https://github.com/bagder/libbrotli')
+    os.chdir('libbrotli')
+    exec_sys_cmd('./autogen.sh && ./configure')
+    exec_sys_cmd('make && make install')
+    try:
+        exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib64 && ln -s /usr/local/lib/libbrotlienc.so.0 /lib64')
+    except:
+        pass
+    try:
+        exec_sys_cmd('ln -s /usr/local/lib/libbrotlienc.so.1 /lib && ln -s /usr/local/lib/libbrotlienc.so.0 /lib')
+    except:
+        pass
+
+    os.chdir('../')
     exec_sys_cmd('git clone https://github.com/eustas/ngx_brotli.git')
-    os.chdir('../ngx_brotli')
+    os.chdir('ngx_brotli')
     exec_sys_cmd('git submodule update --init')
 
     os.chdir('../')
     exec_sys_cmd('pwd')
     exec_sys_cmd( './configure --add-module=\'ngx_brotli\' --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit ' +
-                  '--with-openssl=openssl-1.1.1a --with-openssl-opt=\'enable-tls1_3\' --with-http_v2_hpack_enc' )
+                  '--with-openssl=openssl-1.1.1a --with-openssl-opt=\'enable-tls1_3\'' )
     exec_sys_cmd('sudo rm -rf ngx_brotli ')
     print('### compile openresty ...')
     exec_sys_cmd( 'make' )
@@ -153,6 +167,7 @@ if __name__ == '__main__':
         show_help_and_exit()
 
     print('*** All work finished successfully, enjoy it~')
+    exec_sys_cmd('rm -rf ' + openresty_pkg.replace('.tar.gz', '_build'))
 
 
 else:
