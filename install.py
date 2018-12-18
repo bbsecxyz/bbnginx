@@ -65,7 +65,7 @@ def install_openresty( ):
     os.chdir('../')
     exec_sys_cmd('pwd')
     exec_sys_cmd( './configure --add-module=\'ngx_brotli\' --prefix=/opt/verynginx/openresty --user=nginx --group=nginx --with-http_v2_module --with-http_sub_module --with-http_stub_status_module --with-luajit ' +
-                  '--with-openssl=openssl-1.1.1a --with-openssl-opt=\'enable-tls1_3\'' )
+                  '--with-fastcgi_cache_purge  --with-openssl=openssl-1.1.1a --with-openssl-opt=\'enable-tls1_3\'' )
     print('### compile openresty ...')
     exec_sys_cmd( 'make' )
     
