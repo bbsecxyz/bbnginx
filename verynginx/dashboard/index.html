@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>VeryNginx</title>
+<title>BB-Nginx</title>
 <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="css/webInterface.css">
 <link rel="stylesheet" href="css/bs_callout.css">
@@ -42,7 +42,7 @@
     <div id="interface_login" class="interface">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title" >VeryNginx 登录</h3>
+                <h3 class="panel-title" >BB-Nginx 登录</h3>
             </div>
             <div class="panel-body">
                 <form class="form-horizontal" id='login_form' onsubmit="return false;">
@@ -74,7 +74,7 @@
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" onclick="dashboard.switch_to_page('status')" href="#">VeryNginx</a> 
+                    <a class="navbar-brand" onclick="dashboard.switch_to_page('status')" href="#">BB-Nginx</a> 
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
@@ -1825,7 +1825,7 @@
                             <div class="vn-config-box row">
                                 <div class="col-sm-2 vn-config-label">本页Cookie前缀设置</div>
                                 <div class="col-sm-10">
-                                    <input class="form-control vn-config-input" type="text" v-model="config_now.cookie_prefix" placeholder="The prefix of cookies of verynginx" vn_data_verify="verify.str_len(1,20)" onchange="vnform.verify_input_with_notice(this)">
+                                    <input class="form-control vn-config-input" type="text" v-model="config_now.cookie_prefix" placeholder="The prefix of cookies of bbnginx" vn_data_verify="verify.str_len(1,20)" onchange="vnform.verify_input_with_notice(this)">
                                 </div>
                             </div>
 
@@ -2206,10 +2206,10 @@
         
         <div class="page" id="page_about" style="display:none">
             <div style="padding-top:100px">
-                <h1 class="text-center" id="about_title">VeryNginx</h1>
+                <h1 class="text-center" id="about_title">BB-Nginx</h1>
                 <h3 class="text-center" id="about_sub_title">A very powerful and friendly nginx</h3>
                 <div id="about_sub_btn_container">
-                    <a id="about_sub_btn" target="_blank" href="https://github.com/alexazhou/VeryNginx">
+                    <a id="about_sub_btn" target="_blank" href="https://github.com/bbsecxyz/bbnginx">
                         Look in Github
                     </a>
                 </div>
