@@ -7,7 +7,7 @@
 ```
 apt install python wget perl make build-essential \  
             procps libreadline-dev libncurses5-dev \
-            libpcre3-dev libssl-dev  git
+            libpcre3-dev libssl-dev  git  libtool
             
 python install.py  install
 python install.py  update
